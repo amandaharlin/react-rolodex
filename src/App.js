@@ -13,66 +13,62 @@ import {
 
 //import './allContacts.js';
 
-
 class App extends Component {
-  state = { name: '', email: '', allContacts: '' };
+  state = { contactName: '', contactEmail: '', allContacts: '' };
 
   renderContactInputForm = () => {
+    const { contactName, contactEmail } = this.state;
     return (
       <div>
         <Form>
           <Form.Group>
             <Form.Input
               placeholder="name"
-              name="name"
-              value={name}
+              //name="contactName"
+              value={contactName}
               onChange={(event, data) => {
-                this.setState({ name: data.value });
-                console.log(name);
+                this.setState({ contactName: data.value });
+                console.log(contactName);
               }}
             />
             <Form.Input
               placeholder="email"
-              name="email"
-              value={email}
+              //name="email"
+              value={contactEmail}
               onChange={(event, data) => {
-                this.setState({ email: data.value });
+                this.setState({ contactEmail: data.value });
               }}
             />
           </Form.Group>
         </Form>
-        <Button
-          color="green"
-          onClick={() => {
-            const newContact = {
-              id: Math.random(),
-              name: name,
-              email: email
-            };
-
-            this.setState({
-              // allContacts: [newContact, ...this.state.allContacts]
-            });
-          }}
-        >
-          <Icon name="checkmark" /> Add This Contact
-        </Button>
       </div>
     );
   };
 
-  renderContactList = () => {};
+  renderContactList = () => {
+    const { contactName, contactEmail } = this.state;
+    return (
+      <List divided relaxed>
+        <List.Item>
+          <List.Header>{contactName}</List.Header>
+          <List.Description>{contactEmail}</List.Description>
+        </List.Item>
+      </List>
+    );
+  };
 
   render() {
     console.log(this.state);
     return (
       <div className="App">
         <Container>
+          <Divider hidden />
           <Header>Rolodex</Header>
-          {/* {this.renderContactInputForm()} */}
+          {this.renderContactInputForm()}
+          <Divider hidden />
           <Divider />
           <Header>Contacts</Header>
-          {/* {this.renderContactList()} */}
+          {this.renderContactList()}
         </Container>
       </div>
     );
