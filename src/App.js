@@ -11,88 +11,99 @@ import {
   List
 } from 'semantic-ui-react';
 
-class App extends Component {
+export default class App extends Component {
   state = {
     allContacts: [],
     contactName: '',
     contactEmail: ''
   };
 
+  addNewContact = () => {
+    const { contactName, contactEmail, allContacts } = this.state;
+    this.setState({
+      allContacts: [
+        ...allContacts,
+        {
+          id: Math.random(),
+          name: contactName,
+          email: contactEmail
+        }
+      ],
+      contactName: '',
+      contactEmail: ''
+    });
+  };
+
+  removeItemFromList = selectedContect => {
+    const { allContacts } = this.state;
+    this.setState({
+      allContacts: allContacts.filter(c => c.id !== selectedContect.id)
+    });
+  };
+
+  updateContactName = (event, data) => {
+    this.setState({ contactName: data.value });
+  };
+
+  updateContactEmail = (event, data) => {
+    this.setState({ contactEmail: data.value });
+  };
+
   renderContactInputForm = () => {
     const { contactName, contactEmail } = this.state;
     return (
-      <div>
-        <Form>
-          <Form.Group>
-            <Form.Input
-              placeholder="name"
-              name="contactName"
-              value={contactName}
-              onChange={(event, data) => {
-                this.setState({ contactName: data.value });
-              }}
-            />
-            <Form.Input
-              placeholder="email"
-              name="email"
-              value={contactEmail}
-              onChange={(event, data) => {
-                this.setState({ contactEmail: data.value });
-              }}
-            />
-          </Form.Group>
-        </Form>
-        <Button
-          color="teal"
-          onClick={() => {
-            const newContact = {
-              id: Math.random(),
-              name: contactName, //name
-              email: contactEmail
-            };
-
-            this.setState({
-              allContacts: [newContact, ...this.state.allContacts],
-              contactName: '',
-              contactEmail: ''
-            });
-          }}
-        >
+      <Form>
+        <Form.Group>
+          <Form.Input
+            placeholder="name"
+            name="contactName"
+            value={contactName}
+            onChange={this.updateContactName}
+          />
+          <Form.Input
+            placeholder="email"
+            name="email"
+            value={contactEmail}
+            onChange={this.updateContactEmail}
+          />
+        </Form.Group>
+        <Button color="teal" onClick={this.addNewContact}>
           <Icon name="plus circle" /> Add New Contact
         </Button>
-      </div>
+      </Form>
     );
   };
 
-  render() {
-    const { allContacts } = this.state;
+  renderContactList = () => {
+    const contactToHtml = (contact, i) => {
+      return (
+        <List.Item
+          key={contact.id}
+          onClick={() => {
+            this.removeItemFromList(contact);
+          }}
+        >
+          <List.Icon name="mail" size="large" verticalAlign="middle" />
+          <List.Content>
+            <List.Header>{contact.name}</List.Header>
+            <List.Description>{contact.email}</List.Description>
+          </List.Content>
+        </List.Item>
+      );
+    };
 
+    return <List selection>{this.state.allContacts.map(contactToHtml)}</List>;
+  };
+
+  render() {
     return (
-      <div className="App">
-        <Container>
-          <Divider hidden />
-          <Header>Rolodex</Header>
-          {this.renderContactInputForm()}
-          <Divider hidden />
-          <Divider />
-          <Header>Contacts</Header>
-          <List>
-            {allContacts.map((contact, i) => {
-              return (
-                <List.Item key={contact.id}>
-                  <List.Icon name="mail" size="large" verticalAlign="middle" />
-                  <List.Content>
-                    <List.Header>{contact.name}</List.Header>
-                    <List.Description>{contact.email}</List.Description>
-                  </List.Content>
-                </List.Item>
-              );
-            })}
-          </List>
-        </Container>
-      </div>
+      <Container>
+        <Header>Rolodex</Header>
+        {this.renderContactInputForm()}
+        <Divider />
+        <Header>Contacts</Header>
+        {this.renderContactList()}
+      </Container>
     );
   }
 }
-
-export default App;
