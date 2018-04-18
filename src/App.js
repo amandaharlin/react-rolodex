@@ -11,10 +11,12 @@ import {
   List
 } from 'semantic-ui-react';
 
-//import './allContacts.js';
-
 class App extends Component {
-  state = { contactName: '', contactEmail: '', allContacts: '' };
+  state = {
+    allContacts: [],
+    contactName: '',
+    contactEmail: ''
+  };
 
   renderContactInputForm = () => {
     const { contactName, contactEmail } = this.state;
@@ -24,16 +26,15 @@ class App extends Component {
           <Form.Group>
             <Form.Input
               placeholder="name"
-              //name="contactName"
+              name="contactName"
               value={contactName}
               onChange={(event, data) => {
                 this.setState({ contactName: data.value });
-                console.log(contactName);
               }}
             />
             <Form.Input
               placeholder="email"
-              //name="email"
+              name="email"
               value={contactEmail}
               onChange={(event, data) => {
                 this.setState({ contactEmail: data.value });
@@ -41,24 +42,31 @@ class App extends Component {
             />
           </Form.Group>
         </Form>
+        <Button
+          color="teal"
+          onClick={() => {
+            const newContact = {
+              id: Math.random(),
+              name: contactName, //name
+              email: contactEmail
+            };
+
+            this.setState({
+              allContacts: [newContact, ...this.state.allContacts],
+              contactName: '',
+              contactEmail: ''
+            });
+          }}
+        >
+          <Icon name="plus circle" /> Add New Contact
+        </Button>
       </div>
     );
   };
 
-  renderContactList = () => {
-    const { contactName, contactEmail } = this.state;
-    return (
-      <List divided relaxed>
-        <List.Item>
-          <List.Header>{contactName}</List.Header>
-          <List.Description>{contactEmail}</List.Description>
-        </List.Item>
-      </List>
-    );
-  };
-
   render() {
-    console.log(this.state);
+    const { allContacts } = this.state;
+
     return (
       <div className="App">
         <Container>
@@ -68,7 +76,19 @@ class App extends Component {
           <Divider hidden />
           <Divider />
           <Header>Contacts</Header>
-          {this.renderContactList()}
+          <List>
+            {allContacts.map((contact, i) => {
+              return (
+                <List.Item key={contact.id}>
+                  <List.Icon name="mail" size="large" verticalAlign="middle" />
+                  <List.Content>
+                    <List.Header>{contact.name}</List.Header>
+                    <List.Description>{contact.email}</List.Description>
+                  </List.Content>
+                </List.Item>
+              );
+            })}
+          </List>
         </Container>
       </div>
     );
